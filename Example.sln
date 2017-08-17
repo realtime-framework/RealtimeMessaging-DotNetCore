@@ -1,9 +1,9 @@
 
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Example", "Example\Example.csproj", "{252E5334-035E-45D5-8597-F0C45A985634}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Example", "Example\Example.csproj", "{17846E0E-0066-4EDB-9E56-A1A7A7DA9962}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RealtimeMessagingDotNetCore", "RealtimeMessagingDotNetCore\RealtimeMessagingDotNetCore.csproj", "{F09FBDA1-7D41-42E3-BD41-E02477C7B3C8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RealtimeMessaging.DotNetCore", "RealtimeMessaging.DotNetCore\RealtimeMessaging.DotNetCore\RealtimeMessaging.DotNetCore.csproj", "{8936FE4A-9C6A-463E-B2F6-6BC011BB7B01}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,13 +11,13 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{252E5334-035E-45D5-8597-F0C45A985634}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{252E5334-035E-45D5-8597-F0C45A985634}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{252E5334-035E-45D5-8597-F0C45A985634}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{252E5334-035E-45D5-8597-F0C45A985634}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F09FBDA1-7D41-42E3-BD41-E02477C7B3C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F09FBDA1-7D41-42E3-BD41-E02477C7B3C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F09FBDA1-7D41-42E3-BD41-E02477C7B3C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F09FBDA1-7D41-42E3-BD41-E02477C7B3C8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{17846E0E-0066-4EDB-9E56-A1A7A7DA9962}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{17846E0E-0066-4EDB-9E56-A1A7A7DA9962}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{17846E0E-0066-4EDB-9E56-A1A7A7DA9962}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{17846E0E-0066-4EDB-9E56-A1A7A7DA9962}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8936FE4A-9C6A-463E-B2F6-6BC011BB7B01}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8936FE4A-9C6A-463E-B2F6-6BC011BB7B01}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8936FE4A-9C6A-463E-B2F6-6BC011BB7B01}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8936FE4A-9C6A-463E-B2F6-6BC011BB7B01}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

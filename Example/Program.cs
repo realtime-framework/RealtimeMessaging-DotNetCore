@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
-using RT.Ortc.Api;
-using RT.Ortc.Api.Extensibility;
+using RealtimeMessaging.DotNetCore;
+using RealtimeMessaging.DotNetCore.Extensibility;
 
 namespace RTMCore
 {
@@ -17,7 +17,7 @@ namespace RTMCore
 
 
 		private OrtcClient ortcClient;
-	
+
 
 		public async Task Start()
 		{
@@ -25,7 +25,7 @@ namespace RTMCore
 			IOrtcFactory factory = api.LoadOrtcFactory("RealTimeSJ");
 			ortcClient = factory.CreateClient();
 
-            ortcClient.ClusterUrl = "http://ortc-developers.realtime.co/server/2.1/";
+			ortcClient.ClusterUrl = "http://ortc-developers.realtime.co/server/2.1/";
 			ortcClient.ConnectionMetadata = "myConnectionMetadata";
 
 			ortcClient.OnConnected += new OnConnectedDelegate(ortc_OnConnected);
@@ -41,7 +41,7 @@ namespace RTMCore
 			await ortcClient.Connect("[YOUR_APPLICATION_KEY]", "myToken");
 		}
 
-		
+
 		private void ortc_OnReconnecting(object sender)
 		{
 			Console.Out.WriteLine(string.Format("OnReconnecting"));
@@ -59,13 +59,13 @@ namespace RTMCore
 
 		private void ortc_OnUnsubscribed(object sender, string channel)
 		{
-            Console.Out.WriteLine(string.Format("OnUnsubscribed"));
+			Console.Out.WriteLine(string.Format("OnUnsubscribed"));
 		}
 
 		private void ortc_OnSubscribed(object sender, string channel)
 		{
 			Console.Out.WriteLine(string.Format("subscribe channel:{0}", channel));
-            ortcClient.Send(channel, "Hello world!!!");
+			ortcClient.Send(channel, "Hello world!!!");
 		}
 
 		private void ortc_OnDisconnected(object sender)
@@ -77,7 +77,7 @@ namespace RTMCore
 		{
 			ortcClient.Subscribe("myChannel", true, (object ortc, string channel, string message) =>
 			{
-                Console.Out.WriteLine(string.Format("message: {0}, on channel: {1}", message, channel));
+				Console.Out.WriteLine(string.Format("message: {0}, on channel: {1}", message, channel));
 			});
 		}
 	}

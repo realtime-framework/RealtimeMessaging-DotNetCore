@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard1.4</TargetFramework>
+    <PackOnBuild>true</PackOnBuild>
+    <PackageId>RealtimeMessaging.DotNetCore</PackageId>
+    <PackageVersion>1.0.1</PackageVersion>
+    <Authors>Realtime.co</Authors>
+    <PackageIconUrl>https://framework.realtime.co/assets/img/logo_small.png</PackageIconUrl>
+    <PackageLicenseUrl>https://github.com/realtime-framework/RealtimeMessaging-DotNetCore/blob/master/LICENSE</PackageLicenseUrl>
+    <Owners>Realtime.co</Owners>
+    <PackageProjectUrl>https://github.com/realtime-framework/RealtimeMessaging-DotNetCore</PackageProjectUrl>
+    <Summary>The .NET Core SDK for the Realtime Cloud Messaging (aka ORTC) service.</Summary>
+    <PackageTags>Realtime real-time ORTC Pub/Sub Cloud Messaging Publish Subscribe websockets .netcore</PackageTags>
+    <Title>RealtimeMessaging.DotNetCore</Title>
+    <Description>The .NET Core SDK for the Realtime Cloud Messaging (aka ORTC) service. A secure, fast and highly scalable cloud-hosted Pub/Sub real-time message broker for web and mobile apps. If your website or mobile app has data that needs to be updated in the user's interface as it changes (e.g. real-time stock quotes or ever changing social news feed) Realtime Cloud Messaging is the reliable, easy, unbelievably fast, "works everywhere" solution.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Net.WebSockets.Client" Version="4.3.1" />
+    <PackageReference Include="System.Collections.NonGeneric" Version="4.3.0" />
+    <PackageReference Include="System.Threading.Timer" Version="4.3.0" />
+    <PackageReference Include="System.Runtime.Serialization.Json" Version="4.3.0" />
+    <PackageReference Include="System.Runtime.Serialization.Formatters" Version="4.3.0" />
+    <PackageReference Include="System.Composition" Version="1.1.0" />
+    <PackageReference Include="System.Net.Requests" Version="4.3.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
+    <PackageReference Include="NuGet.Build.Packaging" Version="0.1.248" />
+  </ItemGroup>
+</Project>
