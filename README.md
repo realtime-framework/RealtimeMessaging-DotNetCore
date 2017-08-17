@@ -10,7 +10,7 @@ If you're building a .NET Core solution with data that needs to be updated as it
 
 
 ## API Reference
-[http://messaging-public.realtime.co/documentation/dotnetcore/1.0.0/index.html](http://messaging-public.realtime.co/documentation/dotnetcore/1.0.0/index.html)
+[http://messaging-public.realtime.co/documentation/dotnetcore/1.0.1/index.html](http://messaging-public.realtime.co/documentation/dotnetcore/1.0.1/index.html)
 
 ## Example
 
