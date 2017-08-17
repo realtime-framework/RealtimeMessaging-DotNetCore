@@ -6,6 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\RealtimeMessagingDotNetCore\RealtimeMessagingDotNetCore.csproj" />
+    <ProjectReference Include="..\RealtimeMessaging.DotNetCore\RealtimeMessaging.DotNetCore\RealtimeMessaging.DotNetCore.csproj" />
   </ItemGroup>
 </Project>
