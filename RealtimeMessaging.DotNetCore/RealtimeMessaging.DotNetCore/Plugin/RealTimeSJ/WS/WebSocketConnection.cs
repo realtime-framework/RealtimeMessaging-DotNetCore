@@ -126,13 +126,20 @@ namespace RealtimeMessaging.DotNetCore.Plugin.WS
 		{
 			_pool = new Semaphore(0, 3);
             bool _IsAvailableNetworkActive = false;
-            Balancer.GetServerFromBalancerAsync(Balancer.lastBalancerUrl, (server, ex) => {
-                if (server != null && !server.Equals(""))
-                    _IsAvailableNetworkActive = true;
-				_pool.Release(1);
-			});
-			_pool.WaitOne();
-            _pool.Dispose();
+            try
+            {
+                Balancer.GetServerFromBalancerAsync(Balancer.lastBalancerUrl, (server, ex) =>
+                {
+                    if (server != null && !server.Equals(""))
+                        _IsAvailableNetworkActive = true;
+                    _pool.Release(1);
+                });
+                _pool.WaitOne();
+                _pool.Dispose();
+
+            }catch(Exception e){
+                e.ToString();
+            }
             _pool = null;
             return _IsAvailableNetworkActive;
 		}
