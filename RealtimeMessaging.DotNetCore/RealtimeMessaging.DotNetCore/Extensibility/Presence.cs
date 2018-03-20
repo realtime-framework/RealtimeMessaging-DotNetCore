@@ -6,12 +6,13 @@ using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
 using System.IO;
 using RealtimeMessaging.DotNetCore.Extensibility;
+using System.Threading.Tasks;
 
 namespace RealtimeMessaging.DotNetCore.Extensibility
 {
     public delegate void OnPresenceDelegate(OrtcPresenceException ex, Presence presence);
-    public delegate void OnDisablePresenceDelegate(OrtcPresenceException ex, String result);
-    public delegate void OnEnablePresenceDelegate(OrtcPresenceException ex, String result);
+    public delegate void OnDisablePresenceDelegate(OrtcPresenceException ex, string result);
+    public delegate void OnEnablePresenceDelegate(OrtcPresenceException ex, string result);
 
     /// <summary>
     /// Presence info, such as total subscriptions and metadata.
@@ -21,16 +22,16 @@ namespace RealtimeMessaging.DotNetCore.Extensibility
         private const string SUBSCRIPTIONS_PATTERN = "^{\"subscriptions\":(?<subscriptions>\\d*),\"metadata\":{(?<metadata>.*)}}$";
         private const string METADATA_PATTERN = "\"([^\"]*|[^:,]*)*\":(\\d*)";
         private const string METADATA_DETAIL_PATTERN = "\"(.*)\":(\\d*)";
-        
+
         /// <summary>
         /// Gets the subscriptions value.
         /// </summary>
         public long Subscriptions { get; private set; }
-        
+
         /// <summary>
         /// Gets the first 100 unique metadata.
         /// </summary>
-        public Dictionary<String,long> Metadata { get; private set; }
+        public Dictionary<string, long> Metadata { get; private set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Presence"/> class.
@@ -38,7 +39,7 @@ namespace RealtimeMessaging.DotNetCore.Extensibility
         public Presence()
         {
             this.Subscriptions = 0;
-            this.Metadata = new Dictionary<String, long>();
+            this.Metadata = new Dictionary<string, long>();
         }
 
         /// <summary>
@@ -49,8 +50,8 @@ namespace RealtimeMessaging.DotNetCore.Extensibility
         public static Presence Deserialize(string message)
         {
             Presence result = new Presence();
-            
-            if (!String.IsNullOrEmpty(message))
+
+            if (!string.IsNullOrEmpty(message))
             {
                 var json = message.Replace("\\\\\"", @"""");
                 json = Regex.Unescape(json);
@@ -80,7 +81,7 @@ namespace RealtimeMessaging.DotNetCore.Extensibility
                 }
 
                 result.Subscriptions = subscriptions;
-               
+
             }
 
             return result;
@@ -125,40 +126,20 @@ namespace RealtimeMessaging.DotNetCore.Extensibility
         /// });
         /// </code>
         /// </example>
-        public static void GetPresence(String url, bool isCluster, String applicationKey, String authenticationToken, String channel, OnPresenceDelegate callback)
+        public static async Task<Presence> GetPresenceAsync(string url, bool isCluster, string applicationKey, string authenticationToken, string channel)
         {
-            Balancer.GetServerUrl(url, isCluster, applicationKey, (error, server) =>
-            {
-                if (error == null)
-                {
-                    var presenceUrl = String.IsNullOrEmpty(server) ? server : server[server.Length - 1] == '/' ? server : server + "/";
-                    presenceUrl = String.Format("{0}presence/{1}/{2}/{3}", presenceUrl, applicationKey, authenticationToken, channel);
+            var server = await Balancer.GetServerUrlAsync(url, isCluster, applicationKey);
 
-#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-                    RestWebservice.GetAsync(presenceUrl, (responseError, result) =>
+            var presenceUrl = string.IsNullOrEmpty(server) ? server : server[server.Length - 1] == '/' ? server : server + "/";
+            presenceUrl = string.Format("{0}presence/{1}/{2}/{3}", presenceUrl, applicationKey, authenticationToken, channel);
 
-#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-                    {
-                        if (responseError != null)
-                        {
-                            callback(responseError, null);
-                        }
-                        else
-                        {
-                            Presence presenceData = new Presence();
-                            if (!String.IsNullOrEmpty(result))
-                            {
-                                presenceData = Extensibility.Presence.Deserialize(result);
-                            }
-                            callback(null, presenceData);
-                        }
-                    });  
-                }
-                else
-                {
-                    callback(new OrtcPresenceException(error.Message), null);
-                }
-            });
+            var result = await RestWebservice.GetAsync(presenceUrl);
+
+            var presenceData = new Presence();
+            if (!string.IsNullOrEmpty(result))
+                presenceData = Extensibility.Presence.Deserialize(result);
+
+            return presenceData;
         }
 
         /// <summary>
@@ -186,44 +167,23 @@ namespace RealtimeMessaging.DotNetCore.Extensibility
         /// });
         /// </code>
         /// </example>
-        public static void EnablePresence(String url, bool isCluster, String applicationKey, String privateKey, String channel, bool metadata, OnEnablePresenceDelegate callback)
+        public static async Task<string> EnablePresenceAsync(string url, bool isCluster, string applicationKey, string privateKey, string channel, bool metadata)
         {
-            Balancer.GetServerUrl(url, isCluster, applicationKey, (error, server) =>
+            var server = await Balancer.GetServerUrlAsync(url, isCluster, applicationKey);
+
+            var presenceUrl = string.IsNullOrEmpty(server)
+                ? server
+                : server[server.Length - 1] == '/' ? server : server + "/";
+            presenceUrl = string.Format("{0}presence/enable/{1}/{2}", presenceUrl, applicationKey, channel);
+
+            var content = string.Format("privatekey={0}", privateKey);
+
+            if (metadata)
             {
-                if (error == null)
-                {
-                    var presenceUrl = String.IsNullOrEmpty(server)
-                        ? server
-                        : server[server.Length - 1] == '/' ? server : server + "/";
-                    presenceUrl = String.Format("{0}presence/enable/{1}/{2}", presenceUrl, applicationKey, channel);
+                content = string.Format("{0}&metadata=1", content);
+            }
 
-                    var content = String.Format("privatekey={0}", privateKey);
-
-                    if (metadata)
-                    {
-                        content = String.Format("{0}&metadata=1", content);
-                    }
-
-#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-                    RestWebservice.PostAsync(presenceUrl, content, (responseError, result) =>
-
-#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-                    {
-                        if (responseError != null)
-                        {
-                            callback(responseError, null);
-                        }
-                        else
-                        {
-                            callback(null, result);
-                        }
-                    });
-                }
-                else
-                {
-                    callback(new OrtcPresenceException(error.Message), null);
-                }
-            });
+            return await RestWebservice.PostAsync(presenceUrl, content);
         }
 
         /// <summary>
@@ -235,37 +195,17 @@ namespace RealtimeMessaging.DotNetCore.Extensibility
         /// <param name="privateKey">The private key provided when the ORTC service is purchased.</param>
         /// <param name="channel">Channel to disable presence.</param>
         /// <param name="callback">Callback with error <see cref="OrtcPresenceException"/> and result.</param>
-        public static void DisablePresence(String url, bool isCluster, String applicationKey, String privateKey, String channel, OnDisablePresenceDelegate callback)
+        public static async Task<string> DisablePresenceAsync(string url, bool isCluster, string applicationKey, string privateKey, string channel)
         {
-            Balancer.GetServerUrl(url, isCluster, applicationKey, (error, server) =>
-            {
-                if (error == null)
-                {
-                    var presenceUrl = String.IsNullOrEmpty(server) ? server : server[server.Length - 1] == '/' ? server : server + "/";
-                    presenceUrl = String.Format("{0}presence/disable/{1}/{2}", presenceUrl, applicationKey, channel);
+            var server = await Balancer.GetServerUrlAsync(url, isCluster, applicationKey);
 
-                    var content = String.Format("privatekey={0}", privateKey);
+            var presenceUrl = string.IsNullOrEmpty(server)
+                ? server
+                : server[server.Length - 1] == '/' ? server : server + "/";
+            presenceUrl = string.Format("{0}presence/disable/{1}/{2}", presenceUrl, applicationKey, channel);
 
-#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-                    RestWebservice.PostAsync(presenceUrl, content, (responseError, result) =>
-
-#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-                    {
-                        if (responseError != null)
-                        {
-                            callback(responseError, null);
-                        }
-                        else
-                        {
-                            callback(null, result);
-                        }
-                    });
-                }
-                else
-                {
-                    callback(new OrtcPresenceException(error.Message), null);
-                }
-            });
+            var content = string.Format("privatekey={0}", privateKey);
+            return await RestWebservice.PostAsync(presenceUrl, content);
         }
     }
 }

@@ -24,7 +24,7 @@ namespace RealtimeMessaging.DotNetCore.Plugin.WS
 
         public async Task ConnectAsync(string url)
         {
-            if (!IsAvailableNetworkActive())
+            if (!await IsAvailableNetworkActive())
             {
                 websocket_Closed();
                 return;
@@ -73,7 +73,7 @@ namespace RealtimeMessaging.DotNetCore.Plugin.WS
 
         private void stateTimerAction(Object stateInfo)
         {
-            GetState();
+            GetState().Wait();
 
             if (_stateTimer != null)
             {
@@ -86,20 +86,23 @@ namespace RealtimeMessaging.DotNetCore.Plugin.WS
 
         private static WebSocketState prev;
 
-        private void GetState()
+        private async Task GetState()
         {
-            if(!IsAvailableNetworkActive()){
-                if(_websocket != null)
+            if (!await IsAvailableNetworkActive())
+            {
+                if (_websocket != null)
                     _websocket.Dispose();
+
                 websocket_Closed();
-                if(_stateTimer != null){
-					_stateTimer.Dispose();
-					_stateTimer = null;
+                if (_stateTimer != null)
+                {
+                    _stateTimer.Dispose();
+                    _stateTimer = null;
                 }
                 return;
             }
 
-            if (_websocket == null ||_websocket.State == prev)
+            if (_websocket == null || _websocket.State == prev)
             {
                 return;
             }
@@ -121,28 +124,15 @@ namespace RealtimeMessaging.DotNetCore.Plugin.WS
             }
         }
 
-        private static Semaphore _pool;
-		public static bool IsAvailableNetworkActive()
-		{
-			_pool = new Semaphore(0, 3);
+        public static async Task<bool> IsAvailableNetworkActive()
+        {
             bool _IsAvailableNetworkActive = false;
-            try
-            {
-                Balancer.GetServerFromBalancerAsync(Balancer.lastBalancerUrl, (server, ex) =>
-                {
-                    if (server != null && !server.Equals(""))
-                        _IsAvailableNetworkActive = true;
-                    _pool.Release(1);
-                });
-                _pool.WaitOne();
-                _pool.Dispose();
+            var server = await Balancer.GetServerFromBalancerAsync(Balancer.lastBalancerUrl);
+            if (server != null && !server.Equals(""))
+                _IsAvailableNetworkActive = true;
 
-            }catch(Exception e){
-                e.ToString();
-            }
-            _pool = null;
             return _IsAvailableNetworkActive;
-		}
+        }
 
         public async Task CloseAsync()
         {
@@ -176,14 +166,15 @@ namespace RealtimeMessaging.DotNetCore.Plugin.WS
 
         private async Task SendMessage(ClientWebSocket webSocket, String message)
         {
-            try{
+            try
+            {
                 byte[] buffer = encoder.GetBytes(message);
                 await webSocket.SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Text, true, CancellationToken.None);
-			}
-			catch (Exception e)
-			{
-				e.ToString();
-			}
+            }
+            catch (Exception e)
+            {
+                e.ToString();
+            }
         }
         private StringBuilder rcvMsg = new StringBuilder();
 
@@ -215,13 +206,15 @@ namespace RealtimeMessaging.DotNetCore.Plugin.WS
                             rcvMsg.Append(temp);
                         }
                         else if (temp.ToCharArray()[0] != 'a' && temp.ToCharArray()[1] != '[' && temp.ToCharArray()[temp.Length - 1] == ']')
-                        {                        
+                        {
                             rcvMsg.Append(temp);
                             websocket_MessageReceived(rcvMsg.ToString());
                             rcvMsg.Clear();
                         }
-                    }else{
-                        if(temp.ToCharArray()[0] == 'o' || temp.ToCharArray()[0] == 'h')
+                    }
+                    else
+                    {
+                        if (temp.ToCharArray()[0] == 'o' || temp.ToCharArray()[0] == 'h')
                             websocket_MessageReceived(temp);
                         else
                             rcvMsg.Append(temp);
@@ -291,7 +284,8 @@ namespace RealtimeMessaging.DotNetCore.Plugin.WS
             if (ev != null)
             {
                 string msgCpy = new string(message.ToCharArray());
-                Task.Factory.StartNew(() => {
+                Task.Factory.StartNew(() =>
+                {
                     ev(msgCpy);
                     _semReceivedMsg.Release(1);
                 });

@@ -57,16 +57,16 @@ namespace RealtimeMessaging.DotNetCore.Extensibility
     public delegate void OnMessageDelegate(object sender, string channel, string message);
 
 
-	/// <summary>
-	/// Occurs when the client receives a message in the specified channel that was subscribed with filter.
-	/// </summary>
-	/// <exclude/>
-	public delegate void OnMessageWithFilterDelegate(object sender, string channel, Boolean filtered, string message);
+    /// <summary>
+    /// Occurs when the client receives a message in the specified channel that was subscribed with filter.
+    /// </summary>
+    /// <exclude/>
+    public delegate void OnMessageWithFilterDelegate(object sender, string channel, Boolean filtered, string message);
 
-	/// <summary>
-	/// Occurs when the client receives a message in the specified channel that was subscribed with options.
-	/// </summary>
-	/// <exclude/>
+    /// <summary>
+    /// Occurs when the client receives a message in the specified channel that was subscribed with options.
+    /// </summary>
+    /// <exclude/>
     public delegate void OnMessageWithOptionsDelegate(object sender, Dictionary<string, object> msgOptions);
 
 
@@ -76,11 +76,11 @@ namespace RealtimeMessaging.DotNetCore.Extensibility
     /// <exclude/>
     public delegate void OnMessageWithBufferDelegate(object sender, string channel, string seqId, string message);
 
-	/// <summary>
-	/// Occurs when the client receives a message in the specified channel that was subscribed with buffer.
-	/// </summary>
-	/// <exclude/>
-	public delegate void OnPublishResultDelegate(string error, string seqId);
+    /// <summary>
+    /// Occurs when the client receives a message in the specified channel that was subscribed with buffer.
+    /// </summary>
+    /// <exclude/>
+    public delegate void OnPublishResultDelegate(string error, string seqId);
 
     #endregion
 
@@ -271,7 +271,7 @@ namespace RealtimeMessaging.DotNetCore.Extensibility
             set
             {
                 _isCluster = false;
-                _url = String.IsNullOrEmpty(value) ? String.Empty : value.Trim();
+                _url = string.IsNullOrEmpty(value) ? string.Empty : value.Trim();
             }
         }
 
@@ -287,7 +287,7 @@ namespace RealtimeMessaging.DotNetCore.Extensibility
             set
             {
                 _isCluster = true;
-                _clusterUrl = String.IsNullOrEmpty(value) ? String.Empty : value.Trim();
+                _clusterUrl = string.IsNullOrEmpty(value) ? string.Empty : value.Trim();
             }
         }
 
@@ -366,13 +366,14 @@ namespace RealtimeMessaging.DotNetCore.Extensibility
         /// <value>
         /// Interval in seconds between heartbeats.
         /// </value>
-        public int HeartbeatTime {
+        public int HeartbeatTime
+        {
             get { return _heartbeatTime; }
             set { _heartbeatTime = value > HEARTBEAT_MAX_TIME ? HEARTBEAT_MAX_TIME : (value < HEARTBEAT_MIN_TIME ? HEARTBEAT_MIN_TIME : value); }
         }
 
         #endregion
-        
+
         #region Methods (8)
 
         /// <summary>
@@ -423,74 +424,74 @@ namespace RealtimeMessaging.DotNetCore.Extensibility
             throw new NotImplementedException();
         }
 
-		/// <summary>
-		/// Subscribes to a channel with a message filter.
-		/// </summary>
-		/// <param name="channel">Channel name.</param>
-		/// <param name="subscribeOnReconnected">Subscribe to the specified channel on reconnect.</param>
-		/// <param name="filter">Message filter</param>
-		/// <param name="onMessage"><see cref="OnMessageWithFilterDelegate"/> callback.</param>
-		/// <example>
-		///   <code>
-		/// ortcClient.subscribeWithFilter("channelName", true, "a = 1", OnMessageCallback);
-		/// private void OnMessageCallback(object sender, string channel, Boolean filtered, string message)
-		/// {
-		/// // Do something
-		/// }
-		///   </code>
-		///   </example>
-		public virtual Task SubscribeWithFilter(String channel, Boolean subscribeOnReconnect,
-						  String filter, OnMessageWithFilterDelegate onMessage)
-		{
-			throw new NotImplementedException();
-		}
-
-		/// <summary>
-		/// Subscribes to a channel with given options.
-		/// </summary>
-		/// <param name="options">Channel subscription options</param>
-		/// <param name="subscribeOnReconnected">Subscribe to the specified channel on reconnect.</param>
-		/// <param name="onMessage"><see cref="OnMessageWithOptionsDelegate"/> callback.</param>
-		/// <example>
-		///   <code>
-		/// 
-		/// "options = {
-		///          channel,
-		///          subscribeOnReconnected, // optional, default = true,
-		///          withNotifications(Bool), // optional, default = false, use push notifications as in subscribeWithNotifications
-		///          filter, // optional, default = "", the subscription filter as in subscribeWithFilter
-		///          subscriberId // optional, default = "", the subscriberId as in subscribeWithBuffer
-		///         }"
-		/// 
-		/// ortcClient.SubscribeWithOptions(options, OnMessageCallback);
-		/// private void OnMessageCallback(object sender, Dictionary<string, object> msgOptions)
-		/// {
-		/// // Do something
-		/// }
-		///   </code>
-		///   </example>
-		public virtual Task SubscribeWithOptions(Dictionary<string, object> options, OnMessageWithOptionsDelegate onMessage)
-        { 
+        /// <summary>
+        /// Subscribes to a channel with a message filter.
+        /// </summary>
+        /// <param name="channel">Channel name.</param>
+        /// <param name="subscribeOnReconnected">Subscribe to the specified channel on reconnect.</param>
+        /// <param name="filter">Message filter</param>
+        /// <param name="onMessage"><see cref="OnMessageWithFilterDelegate"/> callback.</param>
+        /// <example>
+        ///   <code>
+        /// ortcClient.subscribeWithFilter("channelName", true, "a = 1", OnMessageCallback);
+        /// private void OnMessageCallback(object sender, string channel, Boolean filtered, string message)
+        /// {
+        /// // Do something
+        /// }
+        ///   </code>
+        ///   </example>
+        public virtual Task SubscribeWithFilter(string channel, Boolean subscribeOnReconnect,
+                          string filter, OnMessageWithFilterDelegate onMessage)
+        {
             throw new NotImplementedException();
         }
 
-		/// <summary>
-		/// Subscribes to a channel with buffer.
-		/// </summary>
-		/// <param name="channel">Channel name.</param>
-		/// <param name="subscriberId">The subscriber client identifier</param>
-		/// <param name="onMessage"><see cref="OnMessageWithBufferDelegate"/> callback.</param>
-		/// <example>
-		///   <code>
-		/// ortcClient.subscribeWithBuffer("channelName", "SOME_ID", OnMessageCallback);
-		/// private void OnMessageCallback(object ortc, string channel, string seqId, string message)
-		/// {
-		/// // Do something
-		/// }
-		///   </code>
-		///   </example>
-		public virtual Task subscribeWithBuffer(String channel, String subscriberId, OnMessageWithBufferDelegate onMessage)
-        { 
+        /// <summary>
+        /// Subscribes to a channel with given options.
+        /// </summary>
+        /// <param name="options">Channel subscription options</param>
+        /// <param name="subscribeOnReconnected">Subscribe to the specified channel on reconnect.</param>
+        /// <param name="onMessage"><see cref="OnMessageWithOptionsDelegate"/> callback.</param>
+        /// <example>
+        ///   <code>
+        /// 
+        /// "options = {
+        ///          channel,
+        ///          subscribeOnReconnected, // optional, default = true,
+        ///          withNotifications(Bool), // optional, default = false, use push notifications as in subscribeWithNotifications
+        ///          filter, // optional, default = "", the subscription filter as in subscribeWithFilter
+        ///          subscriberId // optional, default = "", the subscriberId as in subscribeWithBuffer
+        ///         }"
+        /// 
+        /// ortcClient.SubscribeWithOptions(options, OnMessageCallback);
+        /// private void OnMessageCallback(object sender, Dictionary<string, object> msgOptions)
+        /// {
+        /// // Do something
+        /// }
+        ///   </code>
+        ///   </example>
+        public virtual Task SubscribeWithOptions(Dictionary<string, object> options, OnMessageWithOptionsDelegate onMessage)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Subscribes to a channel with buffer.
+        /// </summary>
+        /// <param name="channel">Channel name.</param>
+        /// <param name="subscriberId">The subscriber client identifier</param>
+        /// <param name="onMessage"><see cref="OnMessageWithBufferDelegate"/> callback.</param>
+        /// <example>
+        ///   <code>
+        /// ortcClient.subscribeWithBuffer("channelName", "SOME_ID", OnMessageCallback);
+        /// private void OnMessageCallback(object ortc, string channel, string seqId, string message)
+        /// {
+        /// // Do something
+        /// }
+        ///   </code>
+        ///   </example>
+        public virtual Task subscribeWithBuffer(string channel, string subscriberId, OnMessageWithBufferDelegate onMessage)
+        {
             throw new NotImplementedException();
         }
 
@@ -523,23 +524,24 @@ namespace RealtimeMessaging.DotNetCore.Extensibility
             throw new NotImplementedException();
         }
 
-		/// <summary>
-		/// Publish a message to a channel.
-		/// </summary>
-		/// <param name="channel">Channel name.</param>
-		/// <param name="message">Message to be sent.</param>
-		/// <param name="ttl">The message expiration time in seconds (0 for maximum allowed ttl).</param>
-		/// <param name="callback">Returns error if message publish was not successful or published message unique id (seqId) if sucessfully published</param>
-		/// <example>
-		///   <code>
-		/// ortcClient.publish("channelName", "messageToSend");
-		///   </code>
-		///   </example>
-		public virtual void publish(string channel, string message, int ttl, OnPublishResultDelegate callback){
+        /// <summary>
+        /// Publish a message to a channel.
+        /// </summary>
+        /// <param name="channel">Channel name.</param>
+        /// <param name="message">Message to be sent.</param>
+        /// <param name="ttl">The message expiration time in seconds (0 for maximum allowed ttl).</param>
+        /// <param name="callback">Returns error if message publish was not successful or published message unique id (seqId) if sucessfully published</param>
+        /// <example>
+        ///   <code>
+        /// ortcClient.publish("channelName", "messageToSend");
+        ///   </code>
+        ///   </example>
+        public virtual void publish(string channel, string message, int ttl, OnPublishResultDelegate callback)
+        {
             throw new NotImplementedException();
         }
 
-        public abstract Task SendProxyAsync(string applicationKey,string privateKey,string channel,string message);
+        public abstract Task SendProxyAsync(string applicationKey, string privateKey, string channel, string message);
 
         /// <summary>
         /// Indicates whether is subscribed to a channel.
@@ -552,7 +554,7 @@ namespace RealtimeMessaging.DotNetCore.Extensibility
         {
             throw new NotImplementedException();
         }
-        
+
         /// <summary>
         /// Gets the subscriptions in the specified channel and if active the first 100 unique metadata.
         /// </summary>
@@ -588,7 +590,7 @@ namespace RealtimeMessaging.DotNetCore.Extensibility
         /// });
         /// </code>
         /// </example>
-        public abstract void Presence(String channel, OnPresenceDelegate callback);
+        public abstract Task<Presence> PresenceAsync(string channel);
 
         /// <summary>
         /// Enables presence for the specified channel with first 100 unique metadata if metadata is set to true.
@@ -612,7 +614,7 @@ namespace RealtimeMessaging.DotNetCore.Extensibility
         /// });
         /// </code>
         /// </example>
-        public abstract void EnablePresence(String privateKey, String channel, bool metadata, OnEnablePresenceDelegate callback);
+        public abstract Task EnablePresenceAsync(string privateKey, string channel, bool metadata);
 
         /// <summary>
         /// Disables presence for the specified channel.
@@ -620,7 +622,7 @@ namespace RealtimeMessaging.DotNetCore.Extensibility
         /// <param name="privateKey">The private key provided when the ORTC service is purchased.</param>
         /// <param name="channel">Channel to disable presence.</param>
         /// <param name="callback">Callback with error <see cref="OrtcPresenceException"/> and result.</param>
-        public abstract void DisablePresence(String privateKey, String channel, OnDisablePresenceDelegate callback);
+        public abstract Task DisablePresenceAsync(string privateKey, string channel);
 
 
 
@@ -634,7 +636,7 @@ namespace RealtimeMessaging.DotNetCore.Extensibility
         public string ReadLocalStorage(string applicationKey, int sessionExpirationTime)
         {
             //IsolatedStorageFile isoStore = IsolatedStorageFile.GetStore(IsolatedStorageScope.User | IsolatedStorageScope.Assembly, null, null);
-            //string isolatedFileName = String.Format("{0}{1}", SESSION_STORAGE_NAME, applicationKey);
+            //string isolatedFileName = string.Format("{0}{1}", SESSION_STORAGE_NAME, applicationKey);
             //string[] fileNames = isoStore.GetFileNames(isolatedFileName);
             //DateTime sessionCreatedAt = DateTime.MinValue;
             string sessionId = "";
@@ -675,14 +677,14 @@ namespace RealtimeMessaging.DotNetCore.Extensibility
             //{
             //    sessionId = "";
             //}
-            //else if (!String.IsNullOrEmpty(sessionId))
+            //else if (!string.IsNullOrEmpty(sessionId))
             //{
             //    SessionId = sessionId;
             //}
 
             return sessionId;
         }
-        
+
         /// <summary>
         /// Creates the local storage.
         /// </summary>
@@ -690,11 +692,11 @@ namespace RealtimeMessaging.DotNetCore.Extensibility
         public void CreateLocalStorage(string applicationKey)
         {
             //IsolatedStorageFile isoStore = IsolatedStorageFile.GetStore(IsolatedStorageScope.User | IsolatedStorageScope.Assembly, null, null);
-            //string isolatedFileName = String.Format("{0}{1}", SESSION_STORAGE_NAME, applicationKey);
+            //string isolatedFileName = string.Format("{0}{1}", SESSION_STORAGE_NAME, applicationKey);
             //IsolatedStorageFileStream oStream = new IsolatedStorageFileStream(isolatedFileName, FileMode.Create, isoStore);
             //StreamWriter writer = new StreamWriter(oStream);
 
-            //writer.WriteLine(String.Format("{0}\n{1}", SessionId, DateTime.Now));
+            //writer.WriteLine(string.Format("{0}\n{1}", SessionId, DateTime.Now));
             //writer.Close();
         }
 
