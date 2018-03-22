@@ -136,15 +136,15 @@ namespace RealtimeMessaging.DotNetCore.Plugin.RealTimeSJ
             {
                 DelegateExceptionCallback(new OrtcAlreadyConnectedException("Already connected"));
             }
-            else if (String.IsNullOrEmpty(ClusterUrl) && String.IsNullOrEmpty(Url))
+            else if (string.IsNullOrEmpty(ClusterUrl) && string.IsNullOrEmpty(Url))
             {
                 DelegateExceptionCallback(new OrtcEmptyFieldException("URL and Cluster URL are null or empty"));
             }
-            else if (String.IsNullOrEmpty(appKey))
+            else if (string.IsNullOrEmpty(appKey))
             {
                 DelegateExceptionCallback(new OrtcEmptyFieldException("Application Key is null or empty"));
             }
-            else if (String.IsNullOrEmpty(authToken))
+            else if (string.IsNullOrEmpty(authToken))
             {
                 DelegateExceptionCallback(new OrtcEmptyFieldException("Authentication ToKen is null or empty"));
             }
@@ -168,9 +168,9 @@ namespace RealtimeMessaging.DotNetCore.Plugin.RealTimeSJ
             {
                 DelegateExceptionCallback(new OrtcInvalidCharactersException("Announcement Subchannel has invalid characters"));
             }
-            else if (!String.IsNullOrEmpty(ConnectionMetadata) && ConnectionMetadata.Length > MAX_CONNECTION_METADATA_SIZE)
+            else if (!string.IsNullOrEmpty(ConnectionMetadata) && ConnectionMetadata.Length > MAX_CONNECTION_METADATA_SIZE)
             {
-                DelegateExceptionCallback(new OrtcMaxLengthException(String.Format("Connection metadata size exceeds the limit of {0} characters", MAX_CONNECTION_METADATA_SIZE)));
+                DelegateExceptionCallback(new OrtcMaxLengthException(string.Format("Connection metadata size exceeds the limit of {0} characters", MAX_CONNECTION_METADATA_SIZE)));
             }
             else if (_isConnecting || _reconnectStartedAt != null)
             {
@@ -190,26 +190,27 @@ namespace RealtimeMessaging.DotNetCore.Plugin.RealTimeSJ
         }
 
 
-		/// <summary>
-		/// Publish a message to a channel.
-		/// </summary>
-		/// <param name="channel">Channel name.</param>
-		/// <param name="message">Message to be sent.</param>
-		/// <param name="ttl">The message expiration time in seconds (0 for maximum allowed ttl).</param>
-		/// <param name="callback">Returns error if message publish was not successful or published message unique id (seqId) if sucessfully published</param>
-		/// <example>
-		///   <code>
-		/// ortcClient.publish("channelName", "messageToSend");
-		///   </code>
-		///   </example>
-		public override void publish(string channel, string message, int ttl, OnPublishResultDelegate callback){
+        /// <summary>
+        /// Publish a message to a channel.
+        /// </summary>
+        /// <param name="channel">Channel name.</param>
+        /// <param name="message">Message to be sent.</param>
+        /// <param name="ttl">The message expiration time in seconds (0 for maximum allowed ttl).</param>
+        /// <param name="callback">Returns error if message publish was not successful or published message unique id (seqId) if sucessfully published</param>
+        /// <example>
+        ///   <code>
+        /// ortcClient.publish("channelName", "messageToSend");
+        ///   </code>
+        ///   </example>
+        public override void publish(string channel, string message, int ttl, OnPublishResultDelegate callback)
+        {
             #region Sanity Checks
 
             if (!IsConnected)
             {
                 DelegateExceptionCallback(new OrtcNotConnectedException("Not connected"));
             }
-            else if (String.IsNullOrEmpty(channel))
+            else if (string.IsNullOrEmpty(channel))
             {
                 DelegateExceptionCallback(new OrtcEmptyFieldException("Channel is null or empty"));
             }
@@ -217,19 +218,19 @@ namespace RealtimeMessaging.DotNetCore.Plugin.RealTimeSJ
             {
                 DelegateExceptionCallback(new OrtcInvalidCharactersException("Channel has invalid characters"));
             }
-            else if (String.IsNullOrEmpty(message))
+            else if (string.IsNullOrEmpty(message))
             {
                 DelegateExceptionCallback(new OrtcEmptyFieldException("Message is null or empty"));
             }
             else
 
             #endregion
-            { 
+            {
                 byte[] channelBytes = Encoding.UTF8.GetBytes(channel);
 
                 if (channelBytes.Length > MAX_CHANNEL_SIZE)
                 {
-                    DelegateExceptionCallback(new OrtcMaxLengthException(String.Format("Channel size exceeds the limit of {0} characters", MAX_CHANNEL_SIZE)));
+                    DelegateExceptionCallback(new OrtcMaxLengthException(string.Format("Channel size exceeds the limit of {0} characters", MAX_CHANNEL_SIZE)));
                 }
                 else
                 {
@@ -243,15 +244,15 @@ namespace RealtimeMessaging.DotNetCore.Plugin.RealTimeSJ
 
                     string hash = _permissions.Where(c => c.Key == channel || c.Key == channelToValidate).FirstOrDefault().Value;
 
-                    if (_permissions != null && _permissions.Count > 0 && String.IsNullOrEmpty(hash))
+                    if (_permissions != null && _permissions.Count > 0 && string.IsNullOrEmpty(hash))
                     {
-                        DelegateExceptionCallback(new OrtcNotConnectedException(String.Format("No permission found to send to the channel '{0}'", channel)));
+                        DelegateExceptionCallback(new OrtcNotConnectedException(string.Format("No permission found to send to the channel '{0}'", channel)));
                     }
                     else
                     {
                         message = message.Replace(Environment.NewLine, "\n");
 
-                        if (channel != String.Empty && message != String.Empty)
+                        if (channel != string.Empty && message != string.Empty)
                         {
                             try
                             {
@@ -288,7 +289,7 @@ namespace RealtimeMessaging.DotNetCore.Plugin.RealTimeSJ
                                     await Task.Delay(this.publishTimeout);
                                     if (pendingPublishMessages.ContainsKey(messageId))
                                     {
-                                        String err = String.Format("Message publish timeout after {0} seconds", publishTimeout);
+                                        string err = string.Format("Message publish timeout after {0} seconds", publishTimeout);
                                         if (pendingPublishMessages != null && ((Dictionary<string, object>)pendingPublishMessages[messageId]).ContainsKey("callback"))
                                         {
                                             OnPublishResultDelegate callbackP = (OnPublishResultDelegate)((Dictionary<string, object>)pendingPublishMessages[messageId])["callback"];
@@ -309,7 +310,9 @@ namespace RealtimeMessaging.DotNetCore.Plugin.RealTimeSJ
                                 if (messageParts.Count < 20)
                                 {
                                     this.flushMessages(channel, ttl, messageParts, 0);
-                                }else{
+                                }
+                                else
+                                {
                                     this.flushMessages(channel, ttl, messageParts, 100);
                                 }
                             }
@@ -334,7 +337,7 @@ namespace RealtimeMessaging.DotNetCore.Plugin.RealTimeSJ
                                         }
                                         break;
                                     default:
-                                        DelegateExceptionCallback(new OrtcGenericException(String.Format("Unable to send: {0}", ex)));
+                                        DelegateExceptionCallback(new OrtcGenericException(string.Format("Unable to send: {0}", ex)));
                                         break;
                                 }
                             }
@@ -344,19 +347,20 @@ namespace RealtimeMessaging.DotNetCore.Plugin.RealTimeSJ
             }
         }
 
-        private void flushMessages(string channel, int ttl, ArrayList messageParts, int delay){
+        private void flushMessages(string channel, int ttl, ArrayList messageParts, int delay)
+        {
             this.partSendInterval = Task.Run(async () =>
             {
-                foreach (KeyValuePair<String, String> messageToSend in messageParts)
+                foreach (KeyValuePair<string, string> messageToSend in messageParts)
                 {
                     await Task.Delay(delay);
                     string escapedMessage = new StringContent(messageToSend.Value, System.Text.Encoding.UTF8, "application/json").ToString();
 
-                    String messageParsed = String.Format("publish;%s;%s;%s;%s;%s;%s",
+                    string messageParsed = string.Format("publish;%s;%s;%s;%s;%s;%s",
                                                          this._applicationKey, this._authenticationToken, channel,
                                                          ttl,
                                                          _permissions,
-                                                         String.Format("{0}_{1}", messageToSend.Key, escapedMessage));
+                                                         string.Format("{0}_{1}", messageToSend.Key, escapedMessage));
                     await DoSendAsync(messageParsed);
                 }
             });
@@ -380,7 +384,7 @@ namespace RealtimeMessaging.DotNetCore.Plugin.RealTimeSJ
             {
                 DelegateExceptionCallback(new OrtcNotConnectedException("Not connected"));
             }
-            else if (String.IsNullOrEmpty(channel))
+            else if (string.IsNullOrEmpty(channel))
             {
                 DelegateExceptionCallback(new OrtcEmptyFieldException("Channel is null or empty"));
             }
@@ -388,7 +392,7 @@ namespace RealtimeMessaging.DotNetCore.Plugin.RealTimeSJ
             {
                 DelegateExceptionCallback(new OrtcInvalidCharactersException("Channel has invalid characters"));
             }
-            else if (String.IsNullOrEmpty(message))
+            else if (string.IsNullOrEmpty(message))
             {
                 DelegateExceptionCallback(new OrtcEmptyFieldException("Message is null or empty"));
             }
@@ -400,7 +404,7 @@ namespace RealtimeMessaging.DotNetCore.Plugin.RealTimeSJ
 
                 if (channelBytes.Length > MAX_CHANNEL_SIZE)
                 {
-                    DelegateExceptionCallback(new OrtcMaxLengthException(String.Format("Channel size exceeds the limit of {0} characters", MAX_CHANNEL_SIZE)));
+                    DelegateExceptionCallback(new OrtcMaxLengthException(string.Format("Channel size exceeds the limit of {0} characters", MAX_CHANNEL_SIZE)));
                 }
                 else
                 {
@@ -414,15 +418,15 @@ namespace RealtimeMessaging.DotNetCore.Plugin.RealTimeSJ
 
                     string hash = _permissions.Where(c => c.Key == channel || c.Key == channelToValidate).FirstOrDefault().Value;
 
-                    if (_permissions != null && _permissions.Count > 0 && String.IsNullOrEmpty(hash))
+                    if (_permissions != null && _permissions.Count > 0 && string.IsNullOrEmpty(hash))
                     {
-                        DelegateExceptionCallback(new OrtcNotConnectedException(String.Format("No permission found to send to the channel '{0}'", channel)));
+                        DelegateExceptionCallback(new OrtcNotConnectedException(string.Format("No permission found to send to the channel '{0}'", channel)));
                     }
                     else
                     {
                         message = message.Replace(Environment.NewLine, "\n");
 
-                        if (channel != String.Empty && message != String.Empty)
+                        if (channel != string.Empty && message != string.Empty)
                         {
                             try
                             {
@@ -455,7 +459,7 @@ namespace RealtimeMessaging.DotNetCore.Plugin.RealTimeSJ
 
                                 for (int i = 0; i < messageParts.Count; i++)
                                 {
-                                    string s = String.Format("send;{0};{1};{2};{3};{4}", _applicationKey, _authenticationToken, channel, hash, String.Format("{0}_{1}-{2}_{3}", messageId, i + 1, messageParts.Count, messageParts[i]));
+                                    string s = string.Format("send;{0};{1};{2};{3};{4}", _applicationKey, _authenticationToken, channel, hash, string.Format("{0}_{1}-{2}_{3}", messageId, i + 1, messageParts.Count, messageParts[i]));
 
                                     await DoSendAsync(s);
                                 }
@@ -479,7 +483,7 @@ namespace RealtimeMessaging.DotNetCore.Plugin.RealTimeSJ
                                         }
                                         break;
                                     default:
-                                        DelegateExceptionCallback(new OrtcGenericException(String.Format("Unable to send: {0}", ex)));
+                                        DelegateExceptionCallback(new OrtcGenericException(string.Format("Unable to send: {0}", ex)));
                                         break;
                                 }
                             }
@@ -497,15 +501,15 @@ namespace RealtimeMessaging.DotNetCore.Plugin.RealTimeSJ
             {
                 DelegateExceptionCallback(new OrtcNotConnectedException("Not connected"));
             }
-            else if (String.IsNullOrEmpty(applicationKey))
+            else if (string.IsNullOrEmpty(applicationKey))
             {
                 DelegateExceptionCallback(new OrtcEmptyFieldException("Application Key is null or empty"));
             }
-            else if (String.IsNullOrEmpty(privateKey))
+            else if (string.IsNullOrEmpty(privateKey))
             {
                 DelegateExceptionCallback(new OrtcEmptyFieldException("Private Key is null or empty"));
             }
-            else if (String.IsNullOrEmpty(channel))
+            else if (string.IsNullOrEmpty(channel))
             {
                 DelegateExceptionCallback(new OrtcEmptyFieldException("Channel is null or empty"));
             }
@@ -513,7 +517,7 @@ namespace RealtimeMessaging.DotNetCore.Plugin.RealTimeSJ
             {
                 DelegateExceptionCallback(new OrtcInvalidCharactersException("Channel has invalid characters"));
             }
-            else if (String.IsNullOrEmpty(message))
+            else if (string.IsNullOrEmpty(message))
             {
                 DelegateExceptionCallback(new OrtcEmptyFieldException("Message is null or empty"));
             }
@@ -525,14 +529,14 @@ namespace RealtimeMessaging.DotNetCore.Plugin.RealTimeSJ
 
                 if (channelBytes.Length > MAX_CHANNEL_SIZE)
                 {
-                    DelegateExceptionCallback(new OrtcMaxLengthException(String.Format("Channel size exceeds the limit of {0} characters", MAX_CHANNEL_SIZE)));
+                    DelegateExceptionCallback(new OrtcMaxLengthException(string.Format("Channel size exceeds the limit of {0} characters", MAX_CHANNEL_SIZE)));
                 }
                 else
                 {
 
                     message = message.Replace(Environment.NewLine, "\n");
 
-                    if (channel != String.Empty && message != String.Empty)
+                    if (channel != string.Empty && message != string.Empty)
                     {
                         try
                         {
@@ -565,7 +569,7 @@ namespace RealtimeMessaging.DotNetCore.Plugin.RealTimeSJ
 
                             for (int i = 0; i < messageParts.Count; i++)
                             {
-                                string s = String.Format("sendproxy;{0};{1};{2};{3}", applicationKey, privateKey, channel, String.Format("{0}_{1}-{2}_{3}", messageId, i + 1, messageParts.Count, messageParts[i]));
+                                string s = string.Format("sendproxy;{0};{1};{2};{3}", applicationKey, privateKey, channel, string.Format("{0}_{1}-{2}_{3}", messageId, i + 1, messageParts.Count, messageParts[i]));
 
                                 await DoSendAsync(s);
                             }
@@ -589,7 +593,7 @@ namespace RealtimeMessaging.DotNetCore.Plugin.RealTimeSJ
                                     }
                                     break;
                                 default:
-                                    DelegateExceptionCallback(new OrtcGenericException(String.Format("Unable to send: {0}", ex)));
+                                    DelegateExceptionCallback(new OrtcGenericException(string.Format("Unable to send: {0}", ex)));
                                     break;
                             }
                         }
@@ -605,19 +609,19 @@ namespace RealtimeMessaging.DotNetCore.Plugin.RealTimeSJ
             string channel = null;
             if (options.ContainsKey("channel"))
                 channel = (string)options["channel"];
-            
+
             bool subscribeOnReconnected = true;
             if (options.ContainsKey("subscribeOnReconnected"))
                 subscribeOnReconnected = (Boolean)options["subscribeOnReconnected"];
-            
+
             bool withFilter = false;
             if (options.ContainsKey("withFilter"))
                 withFilter = (Boolean)options["withFilter"];
-            
+
             string filter = null;
             if (options.ContainsKey("filter"))
                 filter = (string)options["filter"];
-            
+
             string subscriberId = null;
             if (options.ContainsKey("subscriberId"))
                 subscriberId = (string)options["subscriberId"];
@@ -629,7 +633,7 @@ namespace RealtimeMessaging.DotNetCore.Plugin.RealTimeSJ
                 DelegateExceptionCallback(new OrtcNotConnectedException("Not connected"));
                 sanityChecked = false;
             }
-            else if (String.IsNullOrEmpty(channel))
+            else if (string.IsNullOrEmpty(channel))
             {
                 DelegateExceptionCallback(new OrtcEmptyFieldException("Channel is null or empty"));
                 sanityChecked = false;
@@ -648,12 +652,12 @@ namespace RealtimeMessaging.DotNetCore.Plugin.RealTimeSJ
                 {
                     if (channelSubscription.IsSubscribing)
                     {
-                        DelegateExceptionCallback(new OrtcSubscribedException(String.Format("Already subscribing to the channel {0}", channel)));
+                        DelegateExceptionCallback(new OrtcSubscribedException(string.Format("Already subscribing to the channel {0}", channel)));
                         sanityChecked = false;
                     }
                     else if (channelSubscription.IsSubscribed)
                     {
-                        DelegateExceptionCallback(new OrtcSubscribedException(String.Format("Already subscribed to the channel {0}", channel)));
+                        DelegateExceptionCallback(new OrtcSubscribedException(string.Format("Already subscribed to the channel {0}", channel)));
                         sanityChecked = false;
                     }
                 }
@@ -675,7 +679,7 @@ namespace RealtimeMessaging.DotNetCore.Plugin.RealTimeSJ
                         }
                     }
 
-                    DelegateExceptionCallback(new OrtcMaxLengthException(String.Format("Channel size exceeds the limit of {0} characters", MAX_CHANNEL_SIZE)));
+                    DelegateExceptionCallback(new OrtcMaxLengthException(string.Format("Channel size exceeds the limit of {0} characters", MAX_CHANNEL_SIZE)));
                     sanityChecked = false;
                 }
             }
@@ -694,9 +698,9 @@ namespace RealtimeMessaging.DotNetCore.Plugin.RealTimeSJ
 
                 string hash = _permissions.Where(c => c.Key == channel || c.Key == channelToValidate).FirstOrDefault().Value;
 
-                if (_permissions != null && _permissions.Count > 0 && String.IsNullOrEmpty(hash))
+                if (_permissions != null && _permissions.Count > 0 && string.IsNullOrEmpty(hash))
                 {
-                    DelegateExceptionCallback(new OrtcNotConnectedException(String.Format("No permission found to subscribe to the channel '{0}'", channel)));
+                    DelegateExceptionCallback(new OrtcNotConnectedException(string.Format("No permission found to subscribe to the channel '{0}'", channel)));
                 }
                 else
                 {
@@ -728,13 +732,13 @@ namespace RealtimeMessaging.DotNetCore.Plugin.RealTimeSJ
                             channelSubscription.subscriberId = subscriberId;
                         }
                         string s = string.Format("subscribeoptions;{0};{1};{2};{3};;{4};{5};{6}",
-                                                 this._applicationKey, 
-                                                 this._authenticationToken, 
-                                                 channel, 
+                                                 this._applicationKey,
+                                                 this._authenticationToken,
+                                                 channel,
                                                  subscriberId,
                                                  "",
                                                  hash,
-                                                 String.Format("{0}", (filter == null ? "" : filter)));
+                                                 string.Format("{0}", (filter == null ? "" : filter)));
 
                         await DoSendAsync(s);
                     }
@@ -757,7 +761,7 @@ namespace RealtimeMessaging.DotNetCore.Plugin.RealTimeSJ
                                 }
                                 break;
                             default:
-                                DelegateExceptionCallback(new OrtcGenericException(String.Format("Unable to subscribe: {0}", ex)));
+                                DelegateExceptionCallback(new OrtcGenericException(string.Format("Unable to subscribe: {0}", ex)));
                                 break;
                         }
                     }
@@ -792,23 +796,23 @@ namespace RealtimeMessaging.DotNetCore.Plugin.RealTimeSJ
             }));
         }
 
-		/// <summary>
-		/// Subscribe the specified channel in order to receive messages in that channel
-		/// </summary>
-		/// <param name="channel">Channel name.</param>
-		/// <param name="subscribeOnReconnected">Subscribe to the specified channel on reconnect.</param>
-		/// <param name="filter">Indicates the filter for this channel</param>
-		/// <param name="onMessage"><see cref="OnMessageWithFilterDelegate"/> callback.</param>
-		/// <example>
-		///   <code>
-		/// ortcClient.SubscribeWithFilter("channelName", true, "message.a = 10", OnMessageCallback);
-		/// private void OnMessageCallback(object sender, string channel, bool filtered, string message)
-		/// {
-		/// // Do something
-		/// }
-		///   </code>
-		///   </example>
-		public override async Task SubscribeWithFilter(String channel, Boolean subscribeOnReconnect, String filter, OnMessageWithFilterDelegate onMessage)
+        /// <summary>
+        /// Subscribe the specified channel in order to receive messages in that channel
+        /// </summary>
+        /// <param name="channel">Channel name.</param>
+        /// <param name="subscribeOnReconnected">Subscribe to the specified channel on reconnect.</param>
+        /// <param name="filter">Indicates the filter for this channel</param>
+        /// <param name="onMessage"><see cref="OnMessageWithFilterDelegate"/> callback.</param>
+        /// <example>
+        ///   <code>
+        /// ortcClient.SubscribeWithFilter("channelName", true, "message.a = 10", OnMessageCallback);
+        /// private void OnMessageCallback(object sender, string channel, bool filtered, string message)
+        /// {
+        /// // Do something
+        /// }
+        ///   </code>
+        ///   </example>
+        public override async Task SubscribeWithFilter(string channel, Boolean subscribeOnReconnect, string filter, OnMessageWithFilterDelegate onMessage)
         {
             Dictionary<string, object> options = new Dictionary<string, object>();
             options.Add("channel", channel);
@@ -821,57 +825,60 @@ namespace RealtimeMessaging.DotNetCore.Plugin.RealTimeSJ
             }));
         }
 
-		/// <summary>
-		/// Subscribes to a channel with given options.
-		/// </summary>
-		/// <param name="options">Channel subscription options</param>
-		/// <param name="subscribeOnReconnected">Subscribe to the specified channel on reconnect.</param>
-		/// <param name="onMessage"><see cref="OnMessageWithOptionsDelegate"/> callback.</param>
-		/// <example>
-		///   <code>
-		/// 
-		/// "options = {
-		///          channel,
-		///          subscribeOnReconnected, // optional, default = true,
-		///          withNotifications(Bool), // optional, default = false, use push notifications as in subscribeWithNotifications
-		///          filter, // optional, default = "", the subscription filter as in subscribeWithFilter
-		///          subscriberId // optional, default = "", the subscriberId as in subscribeWithBuffer
-		///         }"
-		/// 
-		/// ortcClient.SubscribeWithOptions(options, OnMessageCallback);
-		/// private void OnMessageCallback(object sender, Dictionary<string, object> msgOptions)
-		/// {
-		/// // Do something
-		/// }
-		///   </code>
-		///   </example>
-		public override async Task SubscribeWithOptions(Dictionary<string, object> options, OnMessageWithOptionsDelegate onMessage){
-            
+        /// <summary>
+        /// Subscribes to a channel with given options.
+        /// </summary>
+        /// <param name="options">Channel subscription options</param>
+        /// <param name="subscribeOnReconnected">Subscribe to the specified channel on reconnect.</param>
+        /// <param name="onMessage"><see cref="OnMessageWithOptionsDelegate"/> callback.</param>
+        /// <example>
+        ///   <code>
+        /// 
+        /// "options = {
+        ///          channel,
+        ///          subscribeOnReconnected, // optional, default = true,
+        ///          withNotifications(Bool), // optional, default = false, use push notifications as in subscribeWithNotifications
+        ///          filter, // optional, default = "", the subscription filter as in subscribeWithFilter
+        ///          subscriberId // optional, default = "", the subscriberId as in subscribeWithBuffer
+        ///         }"
+        /// 
+        /// ortcClient.SubscribeWithOptions(options, OnMessageCallback);
+        /// private void OnMessageCallback(object sender, Dictionary<string, object> msgOptions)
+        /// {
+        /// // Do something
+        /// }
+        ///   </code>
+        ///   </example>
+        public override async Task SubscribeWithOptions(Dictionary<string, object> options, OnMessageWithOptionsDelegate onMessage)
+        {
+
             await this._SubscribeWithOptionsAsync(options, onMessage);
         }
 
 
-		/// <summary>
-		/// Subscribes to a channel with buffer.
-		/// </summary>
-		/// <param name="channel">Channel name.</param>
-		/// <param name="subscriberId">The subscriber client identifier</param>
-		/// <param name="onMessage"><see cref="OnMessageWithBufferDelegate"/> callback.</param>
-		/// <example>
-		///   <code>
-		/// ortcClient.subscribeWithBuffer("channelName", "SOME_ID", OnMessageCallback);
-		/// private void OnMessageCallback(object ortc, string channel, string seqId, string message)
-		/// {
-		/// // Do something
-		/// }
-		///   </code>
-		///   </example>
-		public override async Task subscribeWithBuffer(String channel, String subscriberId, OnMessageWithBufferDelegate onMessage){
+        /// <summary>
+        /// Subscribes to a channel with buffer.
+        /// </summary>
+        /// <param name="channel">Channel name.</param>
+        /// <param name="subscriberId">The subscriber client identifier</param>
+        /// <param name="onMessage"><see cref="OnMessageWithBufferDelegate"/> callback.</param>
+        /// <example>
+        ///   <code>
+        /// ortcClient.subscribeWithBuffer("channelName", "SOME_ID", OnMessageCallback);
+        /// private void OnMessageCallback(object ortc, string channel, string seqId, string message)
+        /// {
+        /// // Do something
+        /// }
+        ///   </code>
+        ///   </example>
+        public override async Task subscribeWithBuffer(string channel, string subscriberId, OnMessageWithBufferDelegate onMessage)
+        {
             Dictionary<string, object> options = new Dictionary<string, object>();
             options.Add("channel", channel);
             options.Add("subscribeOnReconnected", true);
             options.Add("subscriberId", subscriberId);
-            await this._SubscribeWithOptionsAsync(options, new OnMessageWithOptionsDelegate((object sender, Dictionary<string, object> msgOptions) => {
+            await this._SubscribeWithOptionsAsync(options, new OnMessageWithOptionsDelegate((object sender, Dictionary<string, object> msgOptions) =>
+            {
                 string seqId = null;
                 if (msgOptions.ContainsKey("seqId"))
                     seqId = (string)msgOptions["seqId"];
@@ -899,7 +906,7 @@ namespace RealtimeMessaging.DotNetCore.Plugin.RealTimeSJ
                 DelegateExceptionCallback(new OrtcNotConnectedException("Not connected"));
                 sanityChecked = false;
             }
-            else if (String.IsNullOrEmpty(channel))
+            else if (string.IsNullOrEmpty(channel))
             {
                 DelegateExceptionCallback(new OrtcEmptyFieldException("Channel is null or empty"));
                 sanityChecked = false;
@@ -911,7 +918,7 @@ namespace RealtimeMessaging.DotNetCore.Plugin.RealTimeSJ
             }
             else if (!_subscribedChannels.ContainsKey(channel))
             {
-                DelegateExceptionCallback(new OrtcNotSubscribedException(String.Format("Not subscribed to the channel {0}", channel)));
+                DelegateExceptionCallback(new OrtcNotSubscribedException(string.Format("Not subscribed to the channel {0}", channel)));
                 sanityChecked = false;
             }
             else if (_subscribedChannels.ContainsKey(channel))
@@ -921,7 +928,7 @@ namespace RealtimeMessaging.DotNetCore.Plugin.RealTimeSJ
 
                 if (channelSubscription != null && !channelSubscription.IsSubscribed)
                 {
-                    DelegateExceptionCallback(new OrtcNotSubscribedException(String.Format("Not subscribed to the channel {0}", channel)));
+                    DelegateExceptionCallback(new OrtcNotSubscribedException(string.Format("Not subscribed to the channel {0}", channel)));
                     sanityChecked = false;
                 }
             }
@@ -931,7 +938,7 @@ namespace RealtimeMessaging.DotNetCore.Plugin.RealTimeSJ
 
                 if (channelBytes.Length > MAX_CHANNEL_SIZE)
                 {
-                    DelegateExceptionCallback(new OrtcMaxLengthException(String.Format("Channel size exceeds the limit of {0} characters", MAX_CHANNEL_SIZE)));
+                    DelegateExceptionCallback(new OrtcMaxLengthException(string.Format("Channel size exceeds the limit of {0} characters", MAX_CHANNEL_SIZE)));
                     sanityChecked = false;
                 }
             }
@@ -942,7 +949,7 @@ namespace RealtimeMessaging.DotNetCore.Plugin.RealTimeSJ
             {
                 try
                 {
-                    string s = String.Format("unsubscribe;{0};{1}", _applicationKey, channel);
+                    string s = string.Format("unsubscribe;{0};{1}", _applicationKey, channel);
 
                     await DoSendAsync(s);
                 }
@@ -965,7 +972,7 @@ namespace RealtimeMessaging.DotNetCore.Plugin.RealTimeSJ
                             }
                             break;
                         default:
-                            DelegateExceptionCallback(new OrtcGenericException(String.Format("Unable to unsubscribe: {0}", ex)));
+                            DelegateExceptionCallback(new OrtcGenericException(string.Format("Unable to unsubscribe: {0}", ex)));
                             break;
                     }
                 }
@@ -1018,7 +1025,7 @@ namespace RealtimeMessaging.DotNetCore.Plugin.RealTimeSJ
             {
                 DelegateExceptionCallback(new OrtcNotConnectedException("Not connected"));
             }
-            else if (String.IsNullOrEmpty(channel))
+            else if (string.IsNullOrEmpty(channel))
             {
                 DelegateExceptionCallback(new OrtcEmptyFieldException("Channel is null or empty"));
             }
@@ -1047,28 +1054,28 @@ namespace RealtimeMessaging.DotNetCore.Plugin.RealTimeSJ
             return result;
         }
 
-        public override void Presence(String channel, OnPresenceDelegate callback)
+        public override async Task<Presence> PresenceAsync(string channel)
         {
-            var isCluster = !String.IsNullOrEmpty(this.ClusterUrl);
-            var url = String.IsNullOrEmpty(this.ClusterUrl) ? this.Url : this.ClusterUrl;
+            var isCluster = !string.IsNullOrEmpty(this.ClusterUrl);
+            var url = string.IsNullOrEmpty(this.ClusterUrl) ? this.Url : this.ClusterUrl;
 
-            Extensibility.Presence.GetPresence(url, isCluster, this._applicationKey, this._authenticationToken, channel, callback);
+            return await Extensibility.Presence.GetPresenceAsync(url, isCluster, this._applicationKey, this._authenticationToken, channel);
         }
 
-        public override void EnablePresence(String privateKey, String channel, bool metadata, OnEnablePresenceDelegate callback)
+        public override async Task EnablePresenceAsync(string privateKey, string channel, bool metadata)
         {
-            var isCluster = !String.IsNullOrEmpty(this.ClusterUrl);
-            var url = String.IsNullOrEmpty(this.ClusterUrl) ? this.Url : this.ClusterUrl;
+            var isCluster = !string.IsNullOrEmpty(this.ClusterUrl);
+            var url = string.IsNullOrEmpty(this.ClusterUrl) ? this.Url : this.ClusterUrl;
 
-            Extensibility.Presence.EnablePresence(url, isCluster, this._applicationKey, privateKey, channel, metadata, callback);
+            await Extensibility.Presence.EnablePresenceAsync(url, isCluster, this._applicationKey, privateKey, channel, metadata);
         }
 
-        public override void DisablePresence(String privateKey, String channel, OnDisablePresenceDelegate callback)
+        public override async Task DisablePresenceAsync(string privateKey, string channel)
         {
-            var isCluster = !String.IsNullOrEmpty(this.ClusterUrl);
-            var url = String.IsNullOrEmpty(this.ClusterUrl) ? this.Url : this.ClusterUrl;
+            var isCluster = !string.IsNullOrEmpty(this.ClusterUrl);
+            var url = string.IsNullOrEmpty(this.ClusterUrl) ? this.Url : this.ClusterUrl;
 
-            Extensibility.Presence.DisablePresence(url, isCluster, this._applicationKey, privateKey, channel, callback);
+            await Extensibility.Presence.DisablePresenceAsync(url, isCluster, this._applicationKey, privateKey, channel);
         }
 
         #endregion
@@ -1081,7 +1088,7 @@ namespace RealtimeMessaging.DotNetCore.Plugin.RealTimeSJ
         /// <param name="arguments">The arguments.</param>
         private async Task ProcessOperationValidatedAsync(string arguments)
         {
-            if (!String.IsNullOrEmpty(arguments))
+            if (!string.IsNullOrEmpty(arguments))
             {
                 _reconnectStartedAt = null;
 
@@ -1094,7 +1101,7 @@ namespace RealtimeMessaging.DotNetCore.Plugin.RealTimeSJ
                 {
                     isValid = true;
 
-                    string userPermissions = String.Empty;
+                    string userPermissions = string.Empty;
 
                     if (validatedAuthMatch.Groups["up"].Length > 0)
                     {
@@ -1106,12 +1113,12 @@ namespace RealtimeMessaging.DotNetCore.Plugin.RealTimeSJ
                         _sessionExpirationTime = int.Parse(validatedAuthMatch.Groups["set"].Value);
                     }
 
-                    if (String.IsNullOrEmpty(ReadLocalStorage(_applicationKey, _sessionExpirationTime)))
+                    if (string.IsNullOrEmpty(ReadLocalStorage(_applicationKey, _sessionExpirationTime)))
                     {
                         CreateLocalStorage(_applicationKey);
                     }
 
-                    if (!String.IsNullOrEmpty(userPermissions) && userPermissions != "null")
+                    if (!string.IsNullOrEmpty(userPermissions) && userPermissions != "null")
                     {
                         MatchCollection matchCollection = Regex.Matches(userPermissions, PERMISSIONS_PATTERN);
 
@@ -1163,7 +1170,7 @@ namespace RealtimeMessaging.DotNetCore.Plugin.RealTimeSJ
 
                                 string hash = _permissions.Where(c => c.Key == channel || c.Key == channelToValidate).FirstOrDefault().Value;
 
-                                string s = String.Format("subscribe;{0};{1};{2};{3}", _applicationKey, _authenticationToken, channel, hash);
+                                string s = string.Format("subscribe;{0};{1};{2};{3}", _applicationKey, _authenticationToken, channel, hash);
 
                                 await DoSendAsync(s);
                             }
@@ -1194,7 +1201,7 @@ namespace RealtimeMessaging.DotNetCore.Plugin.RealTimeSJ
                         DelegateConnectedCallback();
                     }
 
-                    //if (arguments.IndexOf("busy", StringComparison.CurrentCulture) < 0)
+                    //if (arguments.IndexOf("busy", stringComparison.CurrentCulture) < 0)
                     //{
                     //    if (_reconnectTimer != null)
                     //    {
@@ -1213,20 +1220,20 @@ namespace RealtimeMessaging.DotNetCore.Plugin.RealTimeSJ
         /// <param name="arguments">The arguments.</param>
         private void ProcessOperationSubscribed(string arguments)
         {
-            if (!String.IsNullOrEmpty(arguments))
+            if (!string.IsNullOrEmpty(arguments))
             {
                 Match subscribedMatch = Regex.Match(arguments, CHANNEL_PATTERN);
 
                 if (subscribedMatch.Success)
                 {
-                    string channelSubscribed = String.Empty;
+                    string channelSubscribed = string.Empty;
 
                     if (subscribedMatch.Groups["channel"].Length > 0)
                     {
                         channelSubscribed = subscribedMatch.Groups["channel"].Value;
                     }
 
-                    if (!String.IsNullOrEmpty(channelSubscribed))
+                    if (!string.IsNullOrEmpty(channelSubscribed))
                     {
                         ChannelSubscription channelSubscription = null;
                         _subscribedChannels.TryGetValue(channelSubscribed, out channelSubscription);
@@ -1249,20 +1256,20 @@ namespace RealtimeMessaging.DotNetCore.Plugin.RealTimeSJ
         /// <param name="arguments">The arguments.</param>
         private void ProcessOperationUnsubscribed(string arguments)
         {
-            if (!String.IsNullOrEmpty(arguments))
+            if (!string.IsNullOrEmpty(arguments))
             {
                 Match unsubscribedMatch = Regex.Match(arguments, CHANNEL_PATTERN);
 
                 if (unsubscribedMatch.Success)
                 {
-                    string channelUnsubscribed = String.Empty;
+                    string channelUnsubscribed = string.Empty;
 
                     if (unsubscribedMatch.Groups["channel"].Length > 0)
                     {
                         channelUnsubscribed = unsubscribedMatch.Groups["channel"].Value;
                     }
 
-                    if (!String.IsNullOrEmpty(channelUnsubscribed))
+                    if (!string.IsNullOrEmpty(channelUnsubscribed))
                     {
                         ChannelSubscription channelSubscription = null;
                         _subscribedChannels.TryGetValue(channelUnsubscribed, out channelSubscription);
@@ -1284,15 +1291,15 @@ namespace RealtimeMessaging.DotNetCore.Plugin.RealTimeSJ
         /// <param name="arguments">The arguments.</param>
         private async Task ProcessOperationErrorAsync(string arguments)
         {
-            if (!String.IsNullOrEmpty(arguments))
+            if (!string.IsNullOrEmpty(arguments))
             {
                 Match errorMatch = Regex.Match(arguments, EXCEPTION_PATTERN);
 
                 if (errorMatch.Success)
                 {
-                    string op = String.Empty;
-                    string error = String.Empty;
-                    string channel = String.Empty;
+                    string op = string.Empty;
+                    string error = string.Empty;
+                    string channel = string.Empty;
 
                     if (errorMatch.Groups["op"].Length > 0)
                     {
@@ -1309,17 +1316,17 @@ namespace RealtimeMessaging.DotNetCore.Plugin.RealTimeSJ
                         channel = errorMatch.Groups["channel"].Value;
                     }
 
-                    if (!String.IsNullOrEmpty(error))
+                    if (!string.IsNullOrEmpty(error))
                     {
                         DelegateExceptionCallback(new OrtcGenericException(error));
                     }
 
-                    if (!String.IsNullOrEmpty(op))
+                    if (!string.IsNullOrEmpty(op))
                     {
                         switch (op)
                         {
                             case "validate":
-                                if (!String.IsNullOrEmpty(error) && (error.Contains("Unable to connect") || error.Contains("Server is too busy")))
+                                if (!string.IsNullOrEmpty(error) && (error.Contains("Unable to connect") || error.Contains("Server is too busy")))
                                 {
                                     IsConnected = false;
                                     DoReconnectAsync();
@@ -1330,7 +1337,7 @@ namespace RealtimeMessaging.DotNetCore.Plugin.RealTimeSJ
                                 }
                                 break;
                             case "subscribe":
-                                if (!String.IsNullOrEmpty(channel))
+                                if (!string.IsNullOrEmpty(channel))
                                 {
                                     ChannelSubscription channelSubscription = null;
                                     _subscribedChannels.TryGetValue(channel, out channelSubscription);
@@ -1344,7 +1351,7 @@ namespace RealtimeMessaging.DotNetCore.Plugin.RealTimeSJ
                             case "subscribe_maxsize":
                             case "unsubscribe_maxsize":
                             case "send_maxsize":
-                                if (!String.IsNullOrEmpty(channel))
+                                if (!string.IsNullOrEmpty(channel))
                                 {
                                     ChannelSubscription channelSubscription = null;
                                     _subscribedChannels.TryGetValue(channel, out channelSubscription);
@@ -1374,19 +1381,21 @@ namespace RealtimeMessaging.DotNetCore.Plugin.RealTimeSJ
             {
                 string[] parts = message.Split(new string[] { "a[\"" }, StringSplitOptions.None);
                 parts2 = parts[1].Split(new string[] { "\"]" }, StringSplitOptions.None);
-                string transformMessage = parts2[0].Replace("\\\"","\"");
+                string transformMessage = parts2[0].Replace("\\\"", "\"");
 
                 json = JsonConvert.DeserializeObject<Dictionary<string, object>>(transformMessage);
-            }catch(Exception){
+            }
+            catch (Exception)
+            {
                 return;
             }
             // Received
             if (json != null)
             {
-                string channelReceived = String.Empty;
-                string messageReceived = String.Empty;
+                string channelReceived = string.Empty;
+                string messageReceived = string.Empty;
                 bool filtered = false;
-                string seqId = String.Empty;
+                string seqId = string.Empty;
 
                 if (json.ContainsKey("ch"))
                 {
@@ -1406,14 +1415,14 @@ namespace RealtimeMessaging.DotNetCore.Plugin.RealTimeSJ
                 }
 
 
-                if (!String.IsNullOrEmpty(channelReceived) && !String.IsNullOrEmpty(messageReceived) && _subscribedChannels.ContainsKey(channelReceived))
+                if (!string.IsNullOrEmpty(channelReceived) && !string.IsNullOrEmpty(messageReceived) && _subscribedChannels.ContainsKey(channelReceived))
                 {
                     messageReceived = messageReceived.Replace(@"\\n", Environment.NewLine).Replace("\\\\\"", @"""").Replace("\\\\\\\\", @"\");
 
                     // Multi part
                     Match multiPartMatch = Regex.Match(messageReceived, MULTI_PART_MESSAGE_PATTERN);
 
-                    string messageId = String.Empty;
+                    string messageId = string.Empty;
                     int messageCurrentPart = 1;
                     int messageTotalPart = 1;
                     bool lastPart = false;
@@ -1445,7 +1454,7 @@ namespace RealtimeMessaging.DotNetCore.Plugin.RealTimeSJ
                     lock (_multiPartMessagesBuffer)
                     {
                         // Is a message part
-                        if (!String.IsNullOrEmpty(messageId))
+                        if (!string.IsNullOrEmpty(messageId))
                         {
                             if (!_multiPartMessagesBuffer.ContainsKey(messageId))
                             {
@@ -1467,8 +1476,8 @@ namespace RealtimeMessaging.DotNetCore.Plugin.RealTimeSJ
 
                                         lastPart = true;
                                     }
-                                    if(!seqId.Equals(""))
-                                        sendAckAsync(channelReceived, messageId, seqId, (lastPart?"1":"0"));
+                                    if (!seqId.Equals(""))
+                                        sendAckAsync(channelReceived, messageId, seqId, (lastPart ? "1" : "0"));
                                 }
                             }
                         }
@@ -1491,9 +1500,9 @@ namespace RealtimeMessaging.DotNetCore.Plugin.RealTimeSJ
 
                                     if (ev != null)
                                     {
-                                        if (!String.IsNullOrEmpty(messageId) && _multiPartMessagesBuffer.ContainsKey(messageId))
+                                        if (!string.IsNullOrEmpty(messageId) && _multiPartMessagesBuffer.ContainsKey(messageId))
                                         {
-                                            messageReceived = String.Empty;
+                                            messageReceived = string.Empty;
                                             //lock (messageParts)
                                             //{
                                             var bufferedMultiPartMessages = new List<BufferedMessage>();
@@ -1509,7 +1518,7 @@ namespace RealtimeMessaging.DotNetCore.Plugin.RealTimeSJ
                                             {
                                                 if (part != null)
                                                 {
-                                                    messageReceived = String.Format("{0}{1}", messageReceived, part.Message);
+                                                    messageReceived = string.Format("{0}{1}", messageReceived, part.Message);
                                                 }
                                             }
                                             //}
@@ -1519,13 +1528,13 @@ namespace RealtimeMessaging.DotNetCore.Plugin.RealTimeSJ
                                             _multiPartMessagesBuffer.TryRemove(messageId, out removeResult);
                                         }
 
-                                        if (!String.IsNullOrEmpty(messageReceived))
+                                        if (!string.IsNullOrEmpty(messageReceived))
                                         {
                                             Dictionary<string, object> msgOptions = new Dictionary<string, object>();
                                             msgOptions.Add("channel", channelReceived);
                                             msgOptions.Add("message", messageReceived);
 
-                                            if(!seqId.Equals(""))
+                                            if (!seqId.Equals(""))
                                                 msgOptions.Add("seqId", seqId);
                                             if (!filtered.Equals(""))
                                                 msgOptions.Add("filtered", filtered);
@@ -1549,15 +1558,15 @@ namespace RealtimeMessaging.DotNetCore.Plugin.RealTimeSJ
             else
             {
                 // Unknown
-                DelegateExceptionCallback(new OrtcGenericException(String.Format("Unknown message received: {0}", message)));
+                DelegateExceptionCallback(new OrtcGenericException(string.Format("Unknown message received: {0}", message)));
 
                 //DoDisconnect();
             }
         }
 
-        protected async void sendAckAsync(String channel, String messageId, String seqId, String asAllParts)
+        protected async void sendAckAsync(string channel, string messageId, string seqId, string asAllParts)
         {
-            String subscribeMessage = String.Format("ack;{0};{1};{2};{3};{4}",
+            string subscribeMessage = string.Format("ack;{0};{1};{2};{3};{4}",
                     this._applicationKey, channel, messageId, seqId, asAllParts);
             await DoSendAsync(subscribeMessage);
         }
@@ -1575,11 +1584,11 @@ namespace RealtimeMessaging.DotNetCore.Plugin.RealTimeSJ
             {
                 try
                 {
-                    Url = GetUrlFromCluster();
+                    Url = await GetUrlFromCluster();
 
                     IsCluster = true;
 
-                    if (String.IsNullOrEmpty(Url))
+                    if (string.IsNullOrEmpty(Url))
                     {
                         DelegateExceptionCallback(new OrtcEmptyFieldException("Unable to get URL from cluster"));
                         DoReconnectAsync();
@@ -1595,7 +1604,7 @@ namespace RealtimeMessaging.DotNetCore.Plugin.RealTimeSJ
                 }
             }
 
-            if (!String.IsNullOrEmpty(Url))
+            if (!string.IsNullOrEmpty(Url))
             {
                 try
                 {
@@ -1715,7 +1724,7 @@ namespace RealtimeMessaging.DotNetCore.Plugin.RealTimeSJ
             }
             catch (Exception ex)
             {
-                DelegateExceptionCallback(new OrtcGenericException(String.Format("Error disconnecting: {0}", ex)));
+                DelegateExceptionCallback(new OrtcGenericException(string.Format("Error disconnecting: {0}", ex)));
             }
         }
 
@@ -1731,14 +1740,11 @@ namespace RealtimeMessaging.DotNetCore.Plugin.RealTimeSJ
             }
             catch (Exception ex)
             {
-                DelegateExceptionCallback(new OrtcGenericException(String.Format("Unable to send: {0}", ex)));
+                DelegateExceptionCallback(new OrtcGenericException(string.Format("Unable to send: {0}", ex)));
             }
         }
 
-
-        private static Semaphore _pool = new Semaphore(0, 1);
-        private static int flag = 0;
-        private int publishTimeout { get; set; } 
+        private int publishTimeout { get; set; }
         private Dictionary<string, object> pendingPublishMessages = new Dictionary<string, object>();
         private Task partSendInterval;
 
@@ -1746,21 +1752,9 @@ namespace RealtimeMessaging.DotNetCore.Plugin.RealTimeSJ
         /// Gets the URL from cluster.
         /// </summary>
         /// <returns></returns>
-        private string GetUrlFromCluster()
+        private async Task<string> GetUrlFromCluster()
         {
-            if (flag == 1)
-                return "";
-            flag = 1;
-            String newUrl = "";
-            Balancer.GetServerFromBalancerAsync(ClusterUrl, _applicationKey, (string server, Exception ex) =>
-            {
-                if (server != null)
-                    newUrl = server;
-                _pool.Release(1);
-                flag = 0;
-            });
-            _pool.WaitOne();
-            return newUrl;
+            return await Balancer.GetServerFromBalancerAsync(ClusterUrl, _applicationKey) ?? string.Empty;
         }
 
         #endregion
@@ -1869,7 +1863,7 @@ namespace RealtimeMessaging.DotNetCore.Plugin.RealTimeSJ
                 }
                 else
                 {
-                    DelegateExceptionCallback(new OrtcGenericException(String.Format("WebSocketConnection exception: {0}", error)));
+                    DelegateExceptionCallback(new OrtcGenericException(string.Format("WebSocketConnection exception: {0}", error)));
                 }
             }
         }
@@ -1880,14 +1874,14 @@ namespace RealtimeMessaging.DotNetCore.Plugin.RealTimeSJ
         /// <param name="message"></param>
         private async void _webSocketConnection_OnMessageReceivedAsync(string message)
         {
-            if (!String.IsNullOrEmpty(message))
+            if (!string.IsNullOrEmpty(message))
             {
                 // Open
                 if (message == "o")
                 {
                     try
                     {
-                        if (String.IsNullOrEmpty(ReadLocalStorage(_applicationKey, _sessionExpirationTime)))
+                        if (string.IsNullOrEmpty(ReadLocalStorage(_applicationKey, _sessionExpirationTime)))
                         {
                             SessionId = Strings.GenerateId(16);
                         }
@@ -1895,18 +1889,18 @@ namespace RealtimeMessaging.DotNetCore.Plugin.RealTimeSJ
                         string s;
                         if (HeartbeatActive)
                         {
-                            s = String.Format("validate;{0};{1};{2};{3};{4};{5};{6}", _applicationKey, _authenticationToken, AnnouncementSubChannel, SessionId,
+                            s = string.Format("validate;{0};{1};{2};{3};{4};{5};{6}", _applicationKey, _authenticationToken, AnnouncementSubChannel, SessionId,
                                 ConnectionMetadata, HeartbeatTime, HeartbeatFails);
                         }
                         else
                         {
-                            s = String.Format("validate;{0};{1};{2};{3};{4}", _applicationKey, _authenticationToken, AnnouncementSubChannel, SessionId, ConnectionMetadata);
+                            s = string.Format("validate;{0};{1};{2};{3};{4}", _applicationKey, _authenticationToken, AnnouncementSubChannel, SessionId, ConnectionMetadata);
                         }
                         await DoSendAsync(s);
                     }
                     catch (Exception ex)
                     {
-                        DelegateExceptionCallback(new OrtcGenericException(String.Format("Exception sending validate: {0}", ex)));
+                        DelegateExceptionCallback(new OrtcGenericException(string.Format("Exception sending validate: {0}", ex)));
                     }
                 }
                 // Heartbeat
@@ -1945,7 +1939,7 @@ namespace RealtimeMessaging.DotNetCore.Plugin.RealTimeSJ
                                 break;
                             default:
                                 // Unknown operation
-                                DelegateExceptionCallback(new OrtcGenericException(String.Format("Unknown operation \"{0}\" for the message \"{1}\"", operation, message)));
+                                DelegateExceptionCallback(new OrtcGenericException(string.Format("Unknown operation \"{0}\" for the message \"{1}\"", operation, message)));
 
                                 await DoDisconnectAsync();
                                 break;
